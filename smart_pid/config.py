@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -19,7 +18,14 @@ def _secret(name: str, default: Any = None) -> Any:
             return st.secrets[name]
     except StreamlitSecretNotFoundError:
         pass
-    return os.getenv(name, default)
+    return default
+
+
+def _required_secret(name: str) -> str:
+    value = _secret(name)
+    if not value:
+        raise ConfigError(f"Missing required Streamlit secret: {name}.")
+    return str(value)
 
 
 @dataclass(frozen=True)
@@ -51,7 +57,7 @@ class AppConfig:
         return cls(
             cache_dir=Path(str(_secret("PID_CACHE_DIR", ".cache/pid_app"))),
             yolo_model_path=model_path,
-            gemini_api_key=_secret("GEMINI_API_KEY"),
+            gemini_api_key=_required_secret("GEMINI_API_KEY"),
             gemini_model=str(_secret("GEMINI_MODEL", "gemini-3.1-flash-lite")),
             zoom=int(_secret("PID_ZOOM", 8)),
             grid=int(_secret("PID_GRID", 5)),
