@@ -37,5 +37,5 @@ streamlit run app.py
 ## Notes
 
 - `YOLO_MODEL_PATH` is required for detection.
-- `GEMINI_API_KEY` is required for AI line mapping. Without it, instruments still appear with tags and nearest line-number candidates.
+- `GEMINI_API_KEY` is required in Streamlit secrets. The app stops at startup if it is missing.
 - Processing high-resolution P&IDs can be CPU and memory intensive on Streamlit Cloud. Tune `PID_ZOOM`, `PID_GRID`, and `PID_OVERLAP` in environment variables or Streamlit secrets as needed.
