@@ -4,9 +4,8 @@ numpy>=1.26
 pymupdf>=1.24
 opencv-python-headless==4.10.0.84
 easyocr==1.7.2
-pillow>=10.4
-ultralytics>=8.3
-google-genai>=1.0
+Pillow>=10.4
+ultralytics==8.3.0
 google-generativeai>=0.8
 rapidfuzz>=3.9
 pyarrow>=16.1
