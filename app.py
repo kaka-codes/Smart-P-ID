@@ -49,11 +49,19 @@ def main() -> None:
             </div>
             <script>
               const started = Date.now();
-              const timer = document.getElementById("pid-timer");
-              setInterval(() => {
-                const elapsed = (Date.now() - started) / 1000;
-                timer.textContent = elapsed.toFixed(1) + "s";
-              }, 100);
+                const timer = document.getElementById("pid-timer");
+                
+                setInterval(() => {
+                  const elapsed = (Date.now() - started) / 1000;
+                
+                  if (elapsed < 60) {
+                    timer.textContent = elapsed.toFixed(1) + "s";
+                  } else {
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = Math.floor(elapsed % 60);
+                    timer.textContent = `${minutes}m ${seconds}s`;
+                  }
+                }, 100);
             </script>
             """,
             height=32,
