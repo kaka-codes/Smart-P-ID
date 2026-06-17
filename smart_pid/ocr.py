@@ -13,7 +13,34 @@ import pandas as pd
 def _reader(gpu: bool):
     import easyocr
 
-    return easyocr.Reader(["en"], gpu=gpu)
+    print("=" * 60)
+    print("Initializing EasyOCR")
+    print(f"GPU enabled: {gpu}")
+
+    model_dir = Path(".easyocr_models")
+    model_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"EasyOCR model directory: {model_dir.resolve()}")
+    print("Loading EasyOCR models... This may take a few minutes the first time.")
+
+    try:
+        reader = easyocr.Reader(
+            ["en"],
+            gpu=gpu,
+            model_storage_directory=str(model_dir),
+            download_enabled=True,
+        )
+
+        print("EasyOCR initialized successfully")
+        print("=" * 60)
+
+        return reader
+
+    except Exception as e:
+        print("EasyOCR initialization FAILED")
+        print(f"Error: {e}")
+        print("=" * 60)
+        raise
 
 
 def clean_text(text: str) -> str:
@@ -53,7 +80,9 @@ def run_ocr(
     if detections.empty:
         return detections.copy()
 
+    print("Starting OCR pipeline...")
     reader = _reader(gpu)
+    print("EasyOCR reader ready.")
     rows: list[dict[str, object]] = []
     loaded_images: dict[int, object] = {}
 
@@ -73,7 +102,7 @@ def run_ocr(
         if crop.size == 0:
             raw_text = ""
         else:
-            crop = cv2.resize(crop, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+            crop = cv2.resize(crop, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
             gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
             _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             raw_text = " ".join(reader.readtext(thresh, detail=0, paragraph=False))
